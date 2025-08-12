@@ -19,3 +19,17 @@ export async function getProjectById(id){
     return response;
    }
 }
+
+// To get All the Project of the User
+
+export async function loadAllProjects(){
+    console.log("req received");
+   try{
+     const response = await axios.get("/api/project");
+     console.log("response is", response.data);
+     return response.data;
+   }catch(err){
+       console.log(err);
+       return {"error": "error loading the data please refresh the page"};
+   }
+}

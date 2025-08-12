@@ -1,8 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from 'react';
-
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   
@@ -101,11 +102,12 @@ export default function Home() {
             className="mt-12"
           >
             <motion.button
-              className="relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-lg font-medium overflow-hidden group"
+              className="relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-lg font-medium overflow-hidden group cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
+              onClick={()=>router.push("/explore")}
             >
               <span className="relative z-10">Explore Projects</span>
               <motion.span

@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Star, GitFork, Eye, Code2, Flame, TrendingUp, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ProjectCard from '@/components/ProjectCard';
-
+import Loading from './Loading';
+import { loadAllProjects } from '@/lib/api/projectApi';
+import toast from 'react-hot-toast';
 const dummyProjects = [
   {
     id: 1,
@@ -93,10 +95,12 @@ const dummyProjects = [
 
 // Explore Page Component
 export default function ExplorePage() {
+  const [projects, setProjects] = useState();
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('trending');
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
 
-  const filteredProjects = dummyProjects.filter(project =>
+  const filteredProjects = projects?.filter(project =>
     project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
     project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -105,8 +109,26 @@ export default function ExplorePage() {
       if (activeFilter === 'popular') return b.stars - a.stars;
       if (activeFilter === 'newest') return b.id - a.id;
       return 0;
-    }));
+    })) || [];
 
+  useEffect(()=>{
+   async function loadData(){
+    setLoading(true);
+    try{
+         const response = await loadAllProjects();
+         setProjects(response);
+    }catch(err){
+         console.log(err);
+         toast.error("Error fetching data, please refresh the page");
+    }finally{
+       setLoading(false);
+    }
+   }
+   loadData();
+  }, []);
+ if(loading){
+  return <Loading></Loading>
+ }
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -137,6 +159,20 @@ export default function ExplorePage() {
           className="flex flex-wrap justify-center gap-3 mb-12"
         >
           <button
+            onClick={() => setActiveFilter('all')}
+            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'all' ? 'bg-green-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
+          >
+            <Code2 className="w-4 h-4 mr-2" />
+            All Projects
+          </button>
+           <button
+            onClick={() => setActiveFilter('newest')}
+            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'newest' ? 'bg-pink-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Newest
+          </button>
+          <button
             onClick={() => setActiveFilter('trending')}
             className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'trending' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
           >
@@ -150,20 +186,8 @@ export default function ExplorePage() {
             <Flame className="w-4 h-4 mr-2" />
             Popular
           </button>
-          <button
-            onClick={() => setActiveFilter('newest')}
-            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'newest' ? 'bg-pink-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Newest
-          </button>
-          <button
-            onClick={() => setActiveFilter('all')}
-            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'all' ? 'bg-green-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
-          >
-            <Code2 className="w-4 h-4 mr-2" />
-            All Projects
-          </button>
+         
+          
         </motion.div>
 
         {/* Projects Grid */}
@@ -175,7 +199,8 @@ export default function ExplorePage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              
+              <ProjectCard key={project._id} project={project} />
             ))}
           </motion.div>
         ) : (
