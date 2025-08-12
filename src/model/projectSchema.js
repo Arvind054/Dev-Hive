@@ -15,10 +15,15 @@ const projectSchema = mongoose.Schema({
     tags:[{
       type: String,
     }],
-    user:{
-        type: mongoose.Types.ObjectId,
+    liveLink:{
+        type: String,
+    },
+    codeLink:{
+        type: String,
+    },
+    userEmail:{
+        type: String,
         required: true,
-        ref: "users"
     },
     views:{
         type: Number,

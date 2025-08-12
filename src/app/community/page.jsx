@@ -14,7 +14,6 @@ function CommunityPage() {
           Where developers connect, collaborate, and grow together
         </p>
       </header>
-
       {/* What We Do Section */}
       <section className="mb-20">
         <h2 className="text-2xl font-semibold mb-8 text-center">What We Do</h2>

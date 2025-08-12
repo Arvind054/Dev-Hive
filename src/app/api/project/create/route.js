@@ -3,7 +3,7 @@ import { connectDB } from "@/model/mongodb";
 import Project from "@/model/projectSchema";
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
-
+import User from "@/model/userSchema";
 // Config Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -36,7 +36,7 @@ export async function POST(request) {
     const body = await request.json();
     const data = body?.data;
 
-    if (!data || !data.title || !data.description || !data.imagePreview) {
+    if (!data || !data.title || !data.description || !data.imagePreview || !data.liveLink || !data.codeLink || !data.userEmail) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
@@ -64,14 +64,15 @@ export async function POST(request) {
     } else {
       return NextResponse.json({ error: "Unsupported imagePreview format" }, { status: 400 });
     }
-
     // create the new Project
     const newProject = new Project({
       title: data.title,
       description: data.description,
       imageUrl: uploadResult.secure_url,
       tags,
-      userEmail: data.userEmail || "ArvindChoudhary@gmail.com",
+      liveLink: data.liveLink,
+      codeLink: data.codeLink,
+      userEmail: data.userEmail,
     });
     await newProject.save();
     return NextResponse.json({ message: "Project created successfully", project: newProject }, { status: 201 });
