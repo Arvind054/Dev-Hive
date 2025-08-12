@@ -90,7 +90,7 @@ export const Navbar = () => {
               transition={{ delay: 0.7 }}
             >
               <Link
-                href="/contribute"
+                href="/project/create"
                 className="ml-2 flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all shadow-lg hover:shadow-blue-500/20 group"
               >
                 <Plus size={18} className="mr-2" />

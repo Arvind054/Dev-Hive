@@ -4,12 +4,13 @@ import User from "@/model/userSchema";
 import { NextResponse } from 'next/server';
 // Get project by ID
 export async function GET(request, { params }) {
+    const {id} = await params;
     try {
         await connectDB();
-        if (!params.id) {
+        if (!id) {
             return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
         }
-        const project = await Project.findById(params.id);
+        const project = await Project.findById(id);
         if (!project) {
             return NextResponse.json({ error: 'Project not found' }, { status: 404 });
         }

@@ -1,0 +1,103 @@
+"use client"
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useParams } from 'next/navigation';
+import ProjectLoading from '@/components/Loaders/ProjectLoading';
+import { getProjectById } from '@/lib/api/projectApi';
+import toast from 'react-hot-toast';
+function page() {
+    const [projectDetails, setProjectDetails]  = useState('');
+    const [loading, setLoading] = useState(false);
+    const params = useParams();
+    const { id } = params;
+    useEffect(()=>{
+        async function fetchData() {
+    setLoading(true);
+    try {
+      const data = await getProjectById(id); 
+      setProjectDetails(data);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error Getting data, please refresh the page");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+    },[]);
+    if(loading){
+        return <ProjectLoading/>
+    }
+    if(!projectDetails){
+        return <>
+        <h2 className='h-screen pt-25'>404 Project Not Found</h2>
+        </>
+    }
+
+  return (
+    <div className="pt-30 max-w-4xl mx-auto p-6">
+      {/* Project Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">{projectDetails?.title}</h1>
+        <div className="h-1 w-20 bg-blue-500"></div>
+      </div>
+
+      {/* Project Image */}
+      <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
+        <img 
+          src={projectDetails?.imageUrl} 
+          alt={projectDetails?.title} 
+          className="w-full h-auto object-cover"
+        />
+      </div>
+
+      {/* Project Links */}
+      <div className="flex gap-4 mb-6">
+        <a 
+          href={projectDetails?.liveLink} 
+          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Live Demo
+        </a>
+        <a 
+          href={projectDetails?.codeLink} 
+          className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Code
+        </a>
+      </div>
+
+      {/* Project Tags */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {projectDetails?.tags?.map((tag, index) => (
+          <span 
+            key={index}
+            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {/* Project Description */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-3">About the Project</h2>
+        <p className="text-gray-600 leading-relaxed">{projectDetails?.description}</p>
+      </div>
+
+      {/* Developer Contact */}
+      <div className="border-t pt-6">
+        <h3 className="text-lg font-medium text-gray-800 mb-3">Contact the Developer</h3>
+        <p className="text-gray-600">{projectDetails?.userEmail
+}</p>
+      </div>
+    </div>
+  );
+}
+
+export default page
