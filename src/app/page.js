@@ -47,8 +47,8 @@ export default function Home() {
       </div>
 
       {/* Custom cursor effect */}
-      {/*
-      <motion.div 
+      
+    {/*  <motion.div 
         className="fixed w-8 h-8 bg-blue-500/30 rounded-full pointer-events-none z-50"
         animate={{
           x: cursorPosition.x - 16,

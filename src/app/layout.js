@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { store } from "@/lib/store";
 import { Provider } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,12 +29,14 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID}>
         <Provider store= {store}>
           <Toaster />
         <Navbar/>
         {children}
         <Footer/>
         </Provider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

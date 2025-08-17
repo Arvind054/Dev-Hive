@@ -4,13 +4,20 @@ import { Menu, X, ChevronDown, Search, Sparkles, Code, Users, Home, Plus } from 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useGoogleLogin  } from "@react-oauth/google";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { getTokenData } from "@/lib/api/projectApi";
+import { useDispatch } from "react-redux";
+import { loginUser,logOutUser } from "@/lib/slice/userSlice";
 export const Navbar = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const isAuthenticated = useSelector((state)=>state.user.isAuthenticated);
+  const user = useSelector((state)=>state.user.user);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -19,13 +26,25 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLogin  = useGoogleLogin({
+    onSuccess: async(tokenResponse) =>{
+        const res = await getTokenData(tokenResponse);
+       if (!res) throw new Error("Failed to fetch user info");
+       dispatch(loginUser(res));
+    },
+    onError: ()=>{
+      toast.error('Login Error, please try again');
+    }
+  })
+  useEffect(()=>{
+    console.log("user is ", user);
+  }, [user]);
   const navItems = [
     { name: "Home", path: "/", icon: <Home size={18} /> },
     { name: "Explore", path: "/explore", icon: <Code size={18} /> },
     { name: "Community", path: "/community", icon: <Users size={18} /> },
     { name: "About", path: "/about", icon: <Sparkles size={18} /> }
   ];
-
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-xl bg-black shadow-xl' : 'backdrop-blur-lg bg-black'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,6 +118,8 @@ export const Navbar = () => {
             </motion.div>
 
             {/* Profile Section */}
+            {
+              isAuthenticated ? 
             <motion.div 
               className="relative ml-4"
               initial={{ opacity: 0, y: -20 }}
@@ -114,7 +135,7 @@ export const Navbar = () => {
                   whileHover={{ scale: 1.05 }}
                 >
                   <img
-                    src="/logo.png"
+                    src={user?.profileUrl}
                     alt="Profile"
                     className="h-10 w-10 rounded-full border-2 border-transparent group-hover:border-blue-500 transition-all"
                   />
@@ -131,36 +152,38 @@ export const Navbar = () => {
                     className="absolute right-0 mt-3 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden py-2 z-50"
                   >
                     <div className="px-4 py-3 border-b border-gray-700">
-                      <p className="font-medium text-white">John Developer</p>
-                      <p className="text-sm text-gray-400">@johndev</p>
+                      <p className="font-medium text-white">{user?.name}</p>
+                      <p className="text-sm text-gray-400">{user?.email}</p>
                     </div>
-                    <a href="/profile" className="flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
+                    <div onClick={()=>router.push("/user/profile")} className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
                       <Users size={16} className="mr-3 text-blue-400" />
-                      <span>My Profile</span>
-                    </a>
-                    <a href="/my-projects" className="flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
+                      <span >My Profile</span>
+                    </div>
+                    <div onClick={()=>router.push("/user/projects")} className="cursor-pointer **:flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
                       <Code size={16} className="mr-3 text-purple-400" />
                       <span>My Projects</span>
-                    </a>
-                    <a href="/settings" className="flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
+                    </div>
+                    <div onClick={()=>router.push("/settings")} className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-700/50 transition-colors">
                       <svg className="w-4 h-4 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <span>Settings</span>
-                    </a>
+                    </div>
                     <div className="border-t border-gray-700 mt-2">
-                      <a href="/logout" className="flex items-center px-4 py-3 text-red-400 hover:bg-gray-700/50 transition-colors">
+                      <div onClick={()=>logOutUser()} className="cursor-pointerflex items-center px-4 py-3 text-red-400 hover:bg-gray-700/50 transition-colors">
                         <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                         <span>Log Out</span>
-                      </a>
+                      </div>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
+            : <button onClick={handleLogin}>Login</button>
+               }
           </div>
 
           {/* Mobile Menu Toggle */}
