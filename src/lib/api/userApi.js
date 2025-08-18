@@ -15,3 +15,14 @@ export async function getTokenData(tokenResponse) {
    }
 
 }
+
+export async function getUserProjects(email){
+   console.log("req received");
+   try{
+      const response  = await axios.get("/api/user/projects", {params:{email:email}});
+      console.log("projects are projcts", response.data.data);
+      return response.data.data;
+   }catch(err){
+      return {message: "Error Loadin Your Projects, please Try again"}
+   }
+}

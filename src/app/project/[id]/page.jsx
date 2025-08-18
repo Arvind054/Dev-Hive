@@ -5,7 +5,11 @@ import { useParams } from 'next/navigation';
 import ProjectLoading from '@/components/Loaders/ProjectLoading';
 import { getProjectById } from '@/lib/api/projectApi';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation';
 function page() {
+    const user = useSelector((state)=>state.user.user);
+    const router = useRouter();
     const [projectDetails, setProjectDetails]  = useState('');
     const [loading, setLoading] = useState(false);
     const params = useParams();
@@ -53,23 +57,47 @@ function page() {
       </div>
 
       {/* Project Links */}
-      <div className="flex gap-4 mb-6">
-        <a 
-          href={projectDetails?.liveLink} 
+      <div className="flex gap-4 mb-6 justify-between">
+        <div className='flex flex-row gap-4'>
+        <div 
+          onClick={()=>window.open(`${projectDetails?.liveLink}`, "_blank")}
           className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           target="_blank"
           rel="noopener noreferrer"
         >
           Live Demo
-        </a>
-        <a 
-          href={projectDetails?.codeLink} 
+        </div>
+        <div
+          onClick={() => {
+            if (projectDetails?.codeLink) {
+              window.open(projectDetails.codeLink, "_blank");
+            }
+          }} 
           className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors"
           target="_blank"
           rel="noopener noreferrer"
         >
           View Code
-        </a>
+        </div>
+        </div >
+        {projectDetails?.userEmail == user?.email && <div className='flex flex-row gap-4'>
+        <div 
+          onClick={()=>router.push(`/project/edit/${projectDetails?._id}`)}
+          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Edit
+        </div>
+        <div 
+  
+          className="px-6 py-2 bg-red-800 text-white rounded-md hover:bg-red-900 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Delete
+        </div>
+        </div>}
       </div>
 
       {/* Project Tags */}

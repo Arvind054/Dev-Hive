@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     projects:[{
         type: mongoose.Types.ObjectId,
-        ref: "projects"
+        ref: "Project"
     }]
 });
 export default mongoose.models.User || mongoose.model('User', userSchema);

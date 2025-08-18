@@ -20,11 +20,19 @@ export async function getProjectById(id) {
       return response;
    }
 }
+//Edit the Project
+export async function editProject(data){
+   try{
+       const response = await axios.post('/api/project/edit', {data});
+       console.log("message is ", response)
+       return response.data.message;
+   }catch(err){
+      return null;
+   }
+}
 
-// To get All the Project of the User
-
+// To get All the Project of the Users
 export async function loadAllProjects() {
-   console.log("req received");
    try {
       const response = await axios.get("/api/project");
       console.log("response is", response.data);

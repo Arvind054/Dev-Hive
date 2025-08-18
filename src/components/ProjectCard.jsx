@@ -2,7 +2,9 @@
 import { Search, Star, GitFork, Eye, Code2, Flame, TrendingUp, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
 const ProjectCard = ({ project }) => {
+  
   const router = useRouter();
   return (
     <motion.div 
