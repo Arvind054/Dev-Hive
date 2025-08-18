@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGoogleLogin  } from "@react-oauth/google";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { getTokenData } from "@/lib/api/projectApi";
+import { getTokenData } from "@/lib/api/userApi";
 import { useDispatch } from "react-redux";
 import { loginUser,logOutUser } from "@/lib/slice/userSlice";
 export const Navbar = () => {
@@ -182,7 +182,7 @@ export const Navbar = () => {
                 )}
               </AnimatePresence>
             </motion.div>
-            : <button onClick={handleLogin}>Login</button>
+            : <button onClick={handleLogin} className="p-2 pl-3 pr-3 cursor-pointer bg-green-400 rounded-xl">Login</button>
                }
           </div>
 
@@ -218,7 +218,7 @@ export const Navbar = () => {
             transition={{ type: 'spring', damping: 25 }}
             className="md:hidden bg-gray-800/95 backdrop-blur-lg overflow-hidden"
           >
-            <div className="px-6 py-4 space-y-1">
+            {isAuthenticated ? <div className="px-6 py-4 space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -258,7 +258,7 @@ export const Navbar = () => {
                 <Plus size={18} className="mr-2" />
                 Contribute
               </Link>
-            </div>
+            </div>: <div className="m-5 h-[50vh] flex justify-center items-center">Login to Continue <button onClick={handleLogin} className="ml-2 p-2 pl-3 pr-3 cursor-pointer bg-green-400 rounded-xl">Login</button></div>}
           </motion.div>
         )}
       </AnimatePresence>

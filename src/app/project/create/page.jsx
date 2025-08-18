@@ -1,14 +1,15 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Upload, X, Plus, Tag, Image as ImageIcon, Code2, Link } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { addProject } from '@/lib/api/projectApi';
-
+import { useSelector } from 'react-redux';
 
 export default function Page() {
   const router = useRouter();
+  const user = useSelector(state=>state.user.user);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -71,21 +72,33 @@ export default function Page() {
   };
 
   const handleSubmit = async (e) => {
+    setIsSubmitting(true);
     e.preventDefault();
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length === 0) {
+      
       const response = await addProject(formData);
       if (response != null) {
         toast.success(response);
+        setIsSubmitting(false);
         router.push("/");
       } else {
         toast.error(response);
+         setIsSubmitting(false);
       }
     } else {
       setErrors(validationErrors);
+       setIsSubmitting(false);
     }
   };
+// To set the User
+useEffect(()=>{
+   setFormData(prev => ({
+      ...prev,
+      ['userEmail']: user?.email
+    }));
+}, [user]);
 
   const validateForm = () => {
     const errors = {};

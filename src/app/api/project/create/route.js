@@ -74,6 +74,7 @@ export async function POST(request) {
       codeLink: data.codeLink,
       userEmail: data.userEmail,
     });
+    console.log("new project is ", newProject);
     await newProject.save();
     return NextResponse.json({ message: "Project created successfully", project: newProject }, { status: 201 });
   } catch (error) {

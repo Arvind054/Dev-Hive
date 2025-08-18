@@ -4,9 +4,10 @@ import axios from "axios";
 export async function addProject(data) {
    try {
       const response = await axios.post("/api/project/create", { data });
+      console.log("response ", response);
       return response.data.message;
    } catch (err) {
-      return response.data.error;
+      return null;
    }
 };
 
@@ -34,19 +35,5 @@ export async function loadAllProjects() {
    }
 };
 
-//Get the token Response from the token
 
-export async function getTokenData(tokenResponse) {
-   try {
-       
-      const response = await axios.get("/api/user/login", {
-         headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-         },
-      });
-      return response.data.data;
-   } catch (err) {
-         return null;
-   }
 
-}
