@@ -7,13 +7,33 @@ import { getProjectById } from '@/lib/api/projectApi';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { deleteProject } from '@/lib/api/projectApi';
 function page() {
     const user = useSelector((state)=>state.user.user);
     const router = useRouter();
     const [projectDetails, setProjectDetails]  = useState('');
     const [loading, setLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const params = useParams();
     const { id } = params;
+
+  // Handle Project Delete
+    const handleDelete = async()=>{
+      if(!id){
+        toast.error('Invalid Project Id');
+        return ;
+      }
+      setDeleting(true);
+      const response = await deleteProject(id);
+      if(!response){
+        toast.error('Error Deleting Project');
+        setDeleting(false);
+        return ;
+      }
+      setDeleting(false);
+      router.push('/');
+      toast.success('Project Deleted Successfully');
+    }
     useEffect(()=>{
         async function fetchData() {
     setLoading(true);
@@ -30,6 +50,7 @@ function page() {
 
   fetchData();
     },[]);
+
     if(loading){
         return <ProjectLoading/>
     }
@@ -83,20 +104,21 @@ function page() {
         {projectDetails?.userEmail == user?.email && <div className='flex flex-row gap-4'>
         <div 
           onClick={()=>router.push(`/project/edit/${projectDetails?._id}`)}
-          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors cursor-pointer"
           target="_blank"
           rel="noopener noreferrer"
         >
           Edit
         </div>
-        <div 
-  
-          className="px-6 py-2 bg-red-800 text-white rounded-md hover:bg-red-900 transition-colors"
+        <button
+          className="px-6 py-2 bg-red-800 text-white rounded-md hover:bg-red-900 transition-colors cursor-pointer"
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleDelete}
+          disabled = {deleting}
         >
-          Delete
-        </div>
+         {deleting? 'Deleting': 'Delete'}
+        </button>
         </div>}
       </div>
 

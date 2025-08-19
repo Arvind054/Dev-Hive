@@ -43,5 +43,15 @@ export async function loadAllProjects() {
    }
 };
 
+// To delete the project
+export async function deleteProject(projectId){
+   try{
+       const response = await axios.delete(`/api/project/${projectId}`);
+       return response.data.message;
+   }catch(err){
+
+   }
+}
+
 
 
