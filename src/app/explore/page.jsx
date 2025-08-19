@@ -15,16 +15,31 @@ export default function ExplorePage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [loading, setLoading] = useState(false);
 
-  const filteredProjects = projects?.filter(project =>
-    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => {
-      if (activeFilter === 'trending') return b.views - a.views;
-      if (activeFilter === 'popular') return b.stars - a.stars;
-      if (activeFilter === 'newest') return b.id - a.id;
+//sort the project by date
+ const filteredProjects =
+  (projects
+    ?.filter(
+      project =>
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.tags.some(tag =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    )
+    ?.sort((a, b) =>{
+       if (activeFilter === "newest") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      if (activeFilter === "popular") {
+        return b?.views - a?.views;
+      }
+      if(activeFilter ==='Upvoted'){
+        return a?.likes - b?.likes;
+      }
       return 0;
-    })) || [];
+    }
+    )) || [];
+
 
   useEffect(()=>{
    async function loadData(){
@@ -88,11 +103,11 @@ export default function ExplorePage() {
             Newest
           </button>
           <button
-            onClick={() => setActiveFilter('trending')}
-            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'trending' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
+            onClick={() => setActiveFilter('Upvoted')}
+            className={`flex items-center px-4 py-2 rounded-full ${activeFilter === 'Upvoted' ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
           >
             <TrendingUp className="w-4 h-4 mr-2" />
-            Trending
+            Upvoted
           </button>
           <button
             onClick={() => setActiveFilter('popular')}

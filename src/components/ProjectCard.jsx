@@ -1,8 +1,8 @@
 "use client"
-import { Search, Star, GitFork, Eye, Code2, Flame, TrendingUp, Sparkles } from 'lucide-react';
+import { Search, Star, GitFork, Eye, Code2, Flame, TrendingUp, Sparkles,ThumbsUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+
 const ProjectCard = ({ project }) => {
   
   const router = useRouter();
@@ -32,7 +32,7 @@ const ProjectCard = ({ project }) => {
         <div className="flex justify-between items-start mb-3">
           <h3 className="text-xl font-semibold line-clamp-1">{project.title}</h3>
           <span className="flex items-center text-yellow-400 text-sm bg-yellow-400/10 px-2 py-1 rounded-full">
-            <Star className="w-3 h-3 mr-1" />
+            <ThumbsUp className="w-3 h-3 mr-1" />
             {project.stars || 20}
           </span>
         </div>
@@ -41,10 +41,6 @@ const ProjectCard = ({ project }) => {
         
         <div className="flex justify-between items-center text-sm text-gray-500">
           <div className="flex gap-3">
-            <span className="flex items-center">
-              <GitFork className="w-4 h-4 mr-1" />
-              {"10"}
-            </span>
             <span className="flex items-center">
               <Eye className="w-4 h-4 mr-1" />
               {"20"}
