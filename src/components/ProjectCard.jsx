@@ -37,13 +37,13 @@ const ProjectCard = ({ project }) => {
           </span>
         </div>
         
-        <p className="text-gray-400 text-sm line-clamp-2 mb-4">{project.description}</p>
+        <p className="text-gray-400 text-sm line-clamp-2 mb-4">{project?.description.length > 100 ? project?.description.slice(0, 100) + "..." : project?.description}</p>
         
         <div className="flex justify-between items-center text-sm text-gray-500">
           <div className="flex gap-3">
             <span className="flex items-center">
               <Eye className="w-4 h-4 mr-1" />
-              {"20"}
+              {project?.views}
             </span>
           </div>
           <div className="flex gap-2">

@@ -17,7 +17,29 @@ export const Navbar = () => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isAuthenticated = useSelector((state)=>state.user.isAuthenticated);
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state)=>state.user.user);
+
+  useEffect(()=>{
+    if(isAuthenticated){
+      return ;
+    }
+    const tokenResponse = JSON.parse(localStorage.getItem("tokenResponse"));
+    if(!tokenResponse){
+      return ;
+    }
+    async function getUser(){
+      const response = await getTokenData(tokenResponse);
+      if(response){
+        dispatch(loginUser(response));
+      }
+    }
+    if(tokenResponse){
+      setLoading(true);
+      getUser();
+      setLoading(false);
+    }
+  },[]);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -28,17 +50,16 @@ export const Navbar = () => {
 
   const handleLogin  = useGoogleLogin({
     onSuccess: async(tokenResponse) =>{
+      setLoading(true);
         const res = await getTokenData(tokenResponse);
        if (!res) throw new Error("Failed to fetch user info");
        dispatch(loginUser(res));
+       setLoading(false);
     },
     onError: ()=>{
       toast.error('Login Error, please try again');
     }
   })
-  useEffect(()=>{
-    console.log("user is ", user);
-  }, [user]);
   const navItems = [
     { name: "Home", path: "/", icon: <Home size={18} /> },
     { name: "Explore", path: "/explore", icon: <Code size={18} /> },
@@ -182,7 +203,7 @@ export const Navbar = () => {
                 )}
               </AnimatePresence>
             </motion.div>
-            : <button onClick={handleLogin} className="p-2 pl-3 pr-3 cursor-pointer bg-green-400 rounded-xl">Login</button>
+            : <button onClick={handleLogin} className="p-2 pl-3 pr-3 cursor-pointer bg-green-400 rounded-xl" disabled={loading}>{loading? 'Loading': 'Login'}</button>
                }
           </div>
 

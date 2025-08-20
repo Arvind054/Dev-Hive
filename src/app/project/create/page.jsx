@@ -6,10 +6,11 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { addProject } from '@/lib/api/projectApi';
 import { useSelector } from 'react-redux';
-
+import LoginPage from './LoginPage';
 export default function Page() {
   const router = useRouter();
   const user = useSelector(state=>state.user.user);
+  const isAuthenticated = useSelector(state=>state.user.isAuthenticated);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -111,7 +112,9 @@ useEffect(()=>{
     if (!formData.codeLink) errors.codeLink = 'Code Link is required';
     return errors;
   };
-
+if(!isAuthenticated){
+  return <LoginPage/>;
+}
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

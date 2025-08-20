@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { deleteProject } from '@/lib/api/projectApi';
+import {Eye, ThumbsUp} from 'lucide-react'
 function page() {
     const user = useSelector((state)=>state.user.user);
     const router = useRouter();
@@ -101,6 +102,9 @@ function page() {
           View Code
         </div>
         </div >
+        <div className='flex flex-row gap-2 items-center'>
+        <span className='flex flex-row gap-1'> <Eye/>{projectDetails?.views}</span>
+        
         {projectDetails?.userEmail == user?.email && <div className='flex flex-row gap-4'>
         <div 
           onClick={()=>router.push(`/project/edit/${projectDetails?._id}`)}
@@ -120,6 +124,7 @@ function page() {
          {deleting? 'Deleting': 'Delete'}
         </button>
         </div>}
+        </div>
       </div>
 
       {/* Project Tags */}

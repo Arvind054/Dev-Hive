@@ -1,9 +1,8 @@
 import axios from "axios";
 //Get the token Response from the token
 export async function getTokenData(tokenResponse) {
-   console.log("req received");
+   localStorage.setItem("tokenResponse", JSON.stringify(tokenResponse));
    try {
-       
       const response = await axios.get("/api/user/login", {
          headers: {
             Authorization: `Bearer ${tokenResponse.access_token}`,
@@ -13,7 +12,6 @@ export async function getTokenData(tokenResponse) {
    } catch (err) {
          return null;
    }
-
 }
 
 export async function getUserProjects(email){

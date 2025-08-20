@@ -4,13 +4,17 @@ import User from "@/model/userSchema";
 import { NextResponse } from 'next/server';
 // Get project by ID
 export async function GET(request, { params }) {
-    const {id} = await params;
+    const { id } = await params;
     try {
         await connectDB();
         if (!id) {
             return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
         }
-        const project = await Project.findById(id);
+        const project = await Project.findByIdAndUpdate(
+            id,
+            { $inc: { views: 1 } },
+            { new: true }
+        );
         if (!project) {
             return NextResponse.json({ error: 'Project not found' }, { status: 404 });
         }
@@ -25,7 +29,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
     try {
         await connectDB();
-        if(!params.id) {
+        if (!params.id) {
             return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
         }
         const project = await Project.findById(params.id);
@@ -50,10 +54,10 @@ export async function PUT(request, { params }) {
 }
 
 // Delete a Project by Id
-export async function DELETE(request, {params}){
-    const {id} = params;
-    try{
-        if(!id){
+export async function DELETE(request, { params }) {
+    const { id } = params;
+    try {
+        if (!id) {
             return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
         }
         const project = await Project.findById(id);
@@ -67,7 +71,7 @@ export async function DELETE(request, {params}){
         }
         await Project.findByIdAndDelete(id);
         return NextResponse.json({ message: 'Project deleted successfully' });
-    }catch(error){
+    } catch (error) {
         console.error("Database connection error:", error);
         return NextResponse.json({ error: 'Database connection error' }, { status: 500 });
     }
